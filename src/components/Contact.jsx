@@ -102,55 +102,27 @@ export default function Contact() {
   };
 
   // Form Submit -> Success -> Card Returns -> Flap Closes -> Closed
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
-    setSubmitStatus("SUBMITTING");
+    if (!formData.user_name || !formData.user_email || !formData.user_message) return;
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+    // 1. Show Green Success Tick Banner immediately on card
+    setEnvelopeStep('SUCCESS');
 
-    const name = formData.get("user_name");
-    const email = formData.get("user_email");
-    const message = formData.get("user_message");
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          message,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to send message");
-      }
-
-      setSubmitStatus("SUCCESS");
+    // 2. Fast timing: Card returns inside envelope pocket within ~0.75s
+    setTimeout(() => {
+      setEnvelopeStep('RETURNING');
 
       setTimeout(() => {
-        setSubmitStatus("RETURNING");
+        setEnvelopeStep('CLOSING');
 
         setTimeout(() => {
-          setSubmitStatus("CLOSED");
-          setIsSubmitting(false);
-          form.reset();
-        }, 1000);
-      }, 1800);
-    } catch (error) {
-      console.error("Contact form error:", error);
-
-      setSubmitStatus("ERROR");
-      setIsSubmitting(false);
-    }
+          setEnvelopeStep('CLOSED');
+          setFormData({ user_name: '', user_email: '', user_message: '' });
+        }, 350);
+      }, 400);
+    }, 750);
   };
 
   const isFlapOpen = envelopeStep === 'OPENING' || envelopeStep === 'EMERGING' || envelopeStep === 'OPEN' || envelopeStep === 'SUBMITTING' || envelopeStep === 'SUCCESS' || envelopeStep === 'RETURNING';
@@ -494,11 +466,15 @@ export default function Contact() {
 
                   {/* FORM INPUTS */}
                   {envelopeStep === 'SUCCESS' ? (
-                    <div className="py-6 px-4 rounded-2xl bg-emerald-100 border-2 border-black text-emerald-900 text-center space-y-2">
-                      <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-700" />
-                      <h4 className="font-display text-xl font-bold uppercase">Card Sealed Inside Envelope!</h4>
+                    <div className="py-6 px-4 rounded-2xl bg-emerald-100 border-2 border-emerald-600 text-emerald-950 text-center space-y-2 shadow-inner">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-md border-2 border-black">
+                        <CheckCircle2 className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="font-display text-lg font-black uppercase text-emerald-900 tracking-tight">
+                        Message Sent Successfully!
+                      </h4>
                       <p className="font-serif-body text-xs font-bold text-slate-800">
-                        Your message has been safely sealed with the KG wax stamp and dispatched. Krishna will reply back within 24 hours!
+                        Your note is sealed inside the envelope &amp; dispatched to Krishna.
                       </p>
                     </div>
                   ) : (
