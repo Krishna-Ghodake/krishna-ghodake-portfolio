@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
+import { Analytics } from '@vercel/analytics/react';
 import Hero from './components/Hero';
 import Story from './components/Story';
 import HorizontalProjectSlider from './components/HorizontalProjectSlider';
@@ -49,6 +50,8 @@ export default function App() {
 
       {/* Navigation Bar (Slides up when modal is active) */}
       <Navbar isModalOpen={isModalOpen} />
+
+      <Analytics />
 
       {/* Main Content Flow */}
       <main className="relative z-10">
