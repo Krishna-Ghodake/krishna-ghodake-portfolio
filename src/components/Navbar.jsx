@@ -144,7 +144,7 @@ export default function Navbar({ isModalOpen = false }) {
             <motion.a
               href={PORTFOLIO_DATA.personal.socials.resume}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               onMouseEnter={() => setIsResumeHovered(true)}
               onMouseLeave={() => setIsResumeHovered(false)}
               whileHover={{ 
@@ -204,13 +204,27 @@ export default function Navbar({ isModalOpen = false }) {
           </div>
         </nav>
 
-        {/* Mobile Hamburger */}
+        {/* Mobile Header Buttons (Resume & Hamburger) */}
         <div className="flex lg:hidden items-center gap-2">
+          {/* Mobile Direct Resume Button */}
+          <a
+            href={PORTFOLIO_DATA.personal.socials.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono-code text-[11px] font-black px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#07090e] text-[#facc15] hover:text-[#00D4FF] border-2 border-black shadow-[2.5px_2.5px_0px_#00D4FF] active:translate-y-0.5 active:shadow-[1px_1px_0px_#00D4FF] flex items-center gap-1.5 transition-all text-decoration-none cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5 text-[#00D4FF]" />
+            <span className="tracking-wider uppercase">RESUME</span>
+            <ArrowUpRight className="w-3 h-3 text-white" />
+          </a>
+
+          {/* Hamburger Menu Toggle Button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center cursor-pointer"
+            className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center cursor-pointer border border-black shadow-xs active:scale-95 transition-transform"
+            aria-label="Toggle Navigation Menu"
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
           </button>
         </div>
 
@@ -218,7 +232,7 @@ export default function Navbar({ isModalOpen = false }) {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="lg:hidden max-w-6xl mx-auto mt-2 bg-white text-black rounded-2xl border-2 border-black shadow-[4px_4px_0px_#000000] p-6 space-y-3">
+        <div className="lg:hidden max-w-6xl mx-auto mt-2 bg-white text-black rounded-2xl border-2 border-black shadow-[4px_4px_0px_#000000] p-5 space-y-3">
           {navLinks.map((link) => (
             <button
               key={link.id}
@@ -226,8 +240,8 @@ export default function Navbar({ isModalOpen = false }) {
                 setMobileOpen(false);
                 handleNavClick(link.id, link.href);
               }}
-              className={`block w-full text-left font-mono-code text-sm font-bold py-1 ${
-                activeSection === link.id ? 'text-[#00D4FF] font-extrabold' : 'text-slate-900'
+              className={`block w-full text-left font-mono-code text-sm font-bold py-1.5 px-2 rounded-lg transition-colors ${
+                activeSection === link.id ? 'text-[#00D4FF] bg-black/5 font-extrabold' : 'text-slate-900 hover:bg-slate-100'
               }`}
             >
               {link.name}
@@ -237,12 +251,12 @@ export default function Navbar({ isModalOpen = false }) {
             <a
               href={PORTFOLIO_DATA.personal.socials.resume}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               onClick={() => setMobileOpen(false)}
-              className="w-full text-center py-2.5 rounded-xl bg-[#facc15] text-black font-mono-code text-xs font-black border-2 border-black shadow-[3px_3px_0px_#000] flex items-center justify-center gap-2"
+              className="w-full text-center py-2.5 rounded-xl bg-[#07090e] text-[#facc15] font-mono-code text-xs font-black border-2 border-black shadow-[3px_3px_0px_#00D4FF] flex items-center justify-center gap-2 hover:bg-[#00D4FF] hover:text-black transition-colors"
             >
-              <FileText className="w-4 h-4 text-black" />
-              <span>VIEW RESUME ↗</span>
+              <FileText className="w-4 h-4 text-[#00D4FF]" />
+              <span>VIEW RESUME IN NEW TAB ↗</span>
             </a>
           </div>
         </div>

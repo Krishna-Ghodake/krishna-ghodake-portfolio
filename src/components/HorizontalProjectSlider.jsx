@@ -7,6 +7,16 @@ export default function HorizontalProjectSlider({ onModalStateChange }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentScreenIdx, setCurrentScreenIdx] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const projects = PORTFOLIO_DATA.projects || [];
   const activeProject = projects[activeIndex] || projects[0];
@@ -155,7 +165,7 @@ export default function HorizontalProjectSlider({ onModalStateChange }) {
         <div className="w-full flex flex-col items-center space-y-10 pt-4">
           
           {/* 3D CAROUSEL PERSPECTIVE TRACK (SPREAD ACROSS WHOLE SCREEN) */}
-          <div className="w-full relative min-h-[420px] sm:min-h-[480px] flex items-center justify-center [perspective:1400px] overflow-visible py-4">
+          <div className="w-full relative min-h-[420px] sm:min-h-[480px] flex items-center justify-center [perspective:1400px] overflow-hidden sm:overflow-visible py-4">
             <div className="relative w-full max-w-6xl flex items-center justify-center">
               {projects.map((project, idx) => {
                 // Determine 3D carousel fan positioning for all 5 cards
@@ -175,37 +185,37 @@ export default function HorizontalProjectSlider({ onModalStateChange }) {
                   // Center Active Card
                   rotateY = 0;
                   translateX = 0;
-                  scale = 1.02;
+                  scale = isMobile ? 0.95 : 1.02;
                   zIndex = 40;
                   opacity = 1;
                 } else if (offset === -1) {
                   // Inner Left Card
-                  rotateY = -22;
-                  translateX = -250;
-                  scale = 0.86;
+                  rotateY = isMobile ? -14 : -22;
+                  translateX = isMobile ? -110 : -250;
+                  scale = isMobile ? 0.8 : 0.86;
                   zIndex = 30;
-                  opacity = 0.85;
+                  opacity = isMobile ? 0.4 : 0.85;
                 } else if (offset === 1) {
                   // Inner Right Card
-                  rotateY = 22;
-                  translateX = 250;
-                  scale = 0.86;
+                  rotateY = isMobile ? 14 : 22;
+                  translateX = isMobile ? 110 : 250;
+                  scale = isMobile ? 0.8 : 0.86;
                   zIndex = 30;
-                  opacity = 0.85;
+                  opacity = isMobile ? 0.4 : 0.85;
                 } else if (offset === -2) {
                   // Outer Left Card
-                  rotateY = -35;
-                  translateX = -460;
-                  scale = 0.72;
+                  rotateY = isMobile ? -25 : -35;
+                  translateX = isMobile ? -190 : -460;
+                  scale = isMobile ? 0.65 : 0.72;
                   zIndex = 20;
-                  opacity = 0.6;
+                  opacity = isMobile ? 0.15 : 0.6;
                 } else if (offset === 2) {
                   // Outer Right Card
-                  rotateY = 35;
-                  translateX = 460;
-                  scale = 0.72;
+                  rotateY = isMobile ? 25 : 35;
+                  translateX = isMobile ? 190 : 460;
+                  scale = isMobile ? 0.65 : 0.72;
                   zIndex = 20;
-                  opacity = 0.6;
+                  opacity = isMobile ? 0.15 : 0.6;
                 }
 
                 return (
@@ -226,7 +236,7 @@ export default function HorizontalProjectSlider({ onModalStateChange }) {
                       zIndex
                     }}
                     transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-                    className={`absolute w-[280px] sm:w-[400px] md:w-[450px] rounded-3xl border-4 border-black p-5 sm:p-6 cursor-pointer select-none shadow-[12px_12px_0px_#07090e] transition-colors ${
+                    className={`absolute w-[84vw] max-w-[320px] sm:w-[400px] md:w-[450px] rounded-3xl border-4 border-black p-4 sm:p-6 cursor-pointer select-none shadow-[12px_12px_0px_#07090e] transition-colors ${
                       isActive
                         ? 'bg-amber-100/95 border-black ring-4 ring-[#00D4FF]/50 shadow-[0_0_40px_rgba(250,204,21,0.55)]'
                         : 'bg-white/95 border-black/80 hover:border-black'

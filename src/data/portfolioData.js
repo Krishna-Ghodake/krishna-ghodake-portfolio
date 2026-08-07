@@ -6,7 +6,7 @@ export const PORTFOLIO_DATA = {
     monogramG: "#00D4FF",
     role: "Full-Stack Developer & UI/UX Designer",
     tagline: "Building at the intersection of code, design, and imagination, creating digital experiences that are made to be explored, not just viewed",
-    location: "Nashik / Pune, Maharashtra, India",
+    location: "Nashik, Maharashtra, India",
     timezone: "GMT+5:30 (IST)",
     availability: "Open for Freelance & Roles",
     email: "krishna.d.ghodake@gmail.com",
@@ -16,7 +16,7 @@ export const PORTFOLIO_DATA = {
       linkedin: "https://www.linkedin.com/in/krishna-ghodake-550406318/",
       instagram: "https://www.instagram.com/krishna_ghodke_018/",
       email: "krishna.d.ghodake@gmail.com",
-      resume: "#"
+      resume: "/Krishna_Ghodake_Resume.pdf"
     }
   },
 
