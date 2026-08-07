@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
-import { 
-  Mail, 
-  Copy, 
-  Check, 
-  SendHorizontal, 
-  Github, 
-  Linkedin, 
-  Instagram, 
-  ArrowUpRight, 
-  User, 
-  PenTool, 
+import {
+  Mail,
+  Copy,
+  Check,
+  SendHorizontal,
+  Github,
+  Linkedin,
+  Instagram,
+  ArrowUpRight,
+  User,
+  PenTool,
   CheckCircle2,
   Clock,
   ArrowUp,
@@ -40,10 +40,10 @@ export default function Contact() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  
+
   // PHYSICAL ENVELOPE STEP STATE MACHINE:
   // 'CLOSED' -> 'OPENING' -> 'EMERGING' -> 'OPEN' -> 'SUBMITTING' -> 'SUCCESS' -> 'RETURNING' -> 'CLOSING' -> 'CLOSED'
-  const [envelopeStep, setEnvelopeStep] = useState('CLOSED'); 
+  const [envelopeStep, setEnvelopeStep] = useState('CLOSED');
   const [formData, setFormData] = useState({ user_name: '', user_email: '', user_message: '' });
 
   // Auto-scroll screen to frame the full contact card in viewport when opened
@@ -65,7 +65,7 @@ export default function Contact() {
   // Trigger realistic sequential envelope unsealing & card emergence (CLICK ANYWHERE ON ENVELOPE)
   const handleEnvelopeClick = (e) => {
     if (e) e.stopPropagation();
-    
+
     // Prevent conflicting interactions during transition steps
     if (envelopeStep === 'OPENING' || envelopeStep === 'EMERGING' || envelopeStep === 'SUBMITTING' || envelopeStep === 'RETURNING' || envelopeStep === 'CLOSING') {
       return;
@@ -74,7 +74,7 @@ export default function Contact() {
     if (envelopeStep === 'CLOSED') {
       // Step 1: Flap Opens
       setEnvelopeStep('OPENING');
-      
+
       // Step 2: Card Emerges after flap is open
       setTimeout(() => {
         setEnvelopeStep('EMERGING');
@@ -102,31 +102,55 @@ export default function Contact() {
   };
 
   // Form Submit -> Success -> Card Returns -> Flap Closes -> Closed
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (envelopeStep !== 'OPEN') return;
 
-    setEnvelopeStep('SUBMITTING');
+    setIsSubmitting(true);
+    setSubmitStatus("SUBMITTING");
 
-    setTimeout(() => {
-      setEnvelopeStep('SUCCESS');
-    }, 400);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
-    // After delay to read success state, slide card back inside envelope
-    setTimeout(() => {
-      setEnvelopeStep('RETURNING');
-    }, 2200);
+    const name = formData.get("user_name");
+    const email = formData.get("user_email");
+    const message = formData.get("user_message");
 
-    // Flap closes after card is inside
-    setTimeout(() => {
-      setEnvelopeStep('CLOSING');
-    }, 2855);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+        }),
+      });
 
-    // Reset to closed
-    setTimeout(() => {
-      setEnvelopeStep('CLOSED');
-      setFormData({ user_name: '', user_email: '', user_message: '' });
-    }, 3350);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send message");
+      }
+
+      setSubmitStatus("SUCCESS");
+
+      setTimeout(() => {
+        setSubmitStatus("RETURNING");
+
+        setTimeout(() => {
+          setSubmitStatus("CLOSED");
+          setIsSubmitting(false);
+          form.reset();
+        }, 1000);
+      }, 1800);
+    } catch (error) {
+      console.error("Contact form error:", error);
+
+      setSubmitStatus("ERROR");
+      setIsSubmitting(false);
+    }
   };
 
   const isFlapOpen = envelopeStep === 'OPENING' || envelopeStep === 'EMERGING' || envelopeStep === 'OPEN' || envelopeStep === 'SUBMITTING' || envelopeStep === 'SUCCESS' || envelopeStep === 'RETURNING';
@@ -134,8 +158,8 @@ export default function Contact() {
   const isCardInteractive = envelopeStep === 'OPEN';
 
   return (
-    <section 
-      id="contact" 
+    <section
+      id="contact"
       className="pb-20 pt-0 bg-[#f7f5ef] text-[#07090e] relative overflow-hidden selection:bg-[#00D4FF] selection:text-black font-sans"
     >
       {/* SINGLE UNIFIED CONTINUOUS ROTATING MARQUEE TICKER BAR ON SECTION DIVIDER */}
@@ -168,7 +192,7 @@ export default function Contact() {
 
       {/* STUDIO DESK CANVAS CONTAINER */}
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative z-10 pt-8">
-        
+
         {/* DESK BACKGROUND PROPS OVERLAY */}
         <div className="hidden xl:block absolute -top-4 -left-12 pointer-events-none opacity-15 z-0">
           <svg className="w-48 h-64 text-black" viewBox="0 0 200 300" fill="none" stroke="currentColor" strokeWidth="3">
@@ -209,16 +233,16 @@ export default function Contact() {
 
         {/* SIDE-BY-SIDE GRID LAYOUT: NOTEBOOK DESK (LEFT 50%) + INTERACTIVE POP-UP ENVELOPE (RIGHT 50%) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10 mb-16">
-          
+
           {/* LEFT PANEL (LG 6 COLS): SLEEK THIN BORDER LEATHER SPIRAL NOTEBOOK DESK */}
           <div className="lg:col-span-6 relative">
-            
+
             {/* THIN ELEGANT LEATHER BINDING CONTAINER */}
             <div className="bg-[#4a3425] border-3 border-black rounded-[28px] p-2 sm:p-2.5 shadow-[12px_12px_0px_#07090e] relative">
-              
+
               {/* INNER SPIRAL NOTEBOOK SHEET */}
               <div className="bg-[#fcfaf4] text-black border-2 border-black rounded-[22px] p-5 sm:p-6 relative min-h-[560px] space-y-6 text-left overflow-hidden">
-                
+
                 {/* Header Title & Bookmark Ribbons */}
                 <div className="flex items-center justify-between border-b-2 border-black/15 pb-4">
                   <div className="space-y-1">
@@ -277,7 +301,7 @@ export default function Contact() {
 
                 {/* 4 SOCIAL CARDS PINNED / TAPED TO NOTEBOOK PAGE */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  
+
                   {/* LINKEDIN CARD */}
                   <motion.a
                     href={PORTFOLIO_DATA.personal.socials.linkedin}
@@ -376,9 +400,9 @@ export default function Contact() {
                   <div className="relative flex items-center gap-3">
                     <motion.div
                       initial={{ x: 0, y: 0, scale: 1 }}
-                      whileInView={{ 
-                        x: [0, 80, 220, 550], 
-                        y: [0, -60, -200, -550], 
+                      whileInView={{
+                        x: [0, 80, 220, 550],
+                        y: [0, -60, -200, -550],
                         scale: [1, 1.2, 1.25, 0.4],
                         opacity: [1, 1, 0.95, 0]
                       }}
@@ -413,21 +437,20 @@ export default function Contact() {
 
           {/* RIGHT PANEL (LG 6 COLS): UNCLIPPED SPACIOUS DESK CANVAS FOR PHYSICAL ENVELOPE & EMERGING CARD */}
           <div className="lg:col-span-6 relative pt-48 min-h-[640px] overflow-visible">
-            
+
             {/* MAIN KRAFT ENVELOPE BASE WRAPPER (CLICK ANYWHERE ON ENVELOPE TO TOGGLE) */}
-            <div 
+            <div
               onClick={handleEnvelopeClick}
               className="bg-[#c29b68] border-4 border-black rounded-[32px] shadow-[16px_16px_0px_#07090e] relative text-left cursor-pointer group h-[380px] select-none flex flex-col justify-end overflow-visible pointer-events-auto"
             >
-              
+
               {/* ENVELOPE REAR WALL (LAYER 1: Z-0) */}
               <div className="absolute inset-0 bg-[#b8915e] z-0 rounded-[28px] pointer-events-auto" />
 
               {/* AIR-MAIL STRIPE HEADER (LAYER 1.5: Z-5, VISIBLE WHEN FLAP OPENS) */}
-              <div 
-                className={`absolute top-0 left-0 right-0 h-4 pointer-events-none z-5 transition-opacity duration-300 ${
-                  isFlapOpen ? 'opacity-100' : 'opacity-0'
-                }`}
+              <div
+                className={`absolute top-0 left-0 right-0 h-4 pointer-events-none z-5 transition-opacity duration-300 ${isFlapOpen ? 'opacity-100' : 'opacity-0'
+                  }`}
                 style={{
                   backgroundImage: "repeating-linear-gradient(-45deg, #dc2626 0, #dc2626 15px, #ffffff 15px, #ffffff 25px, #2563eb 25px, #2563eb 40px, #ffffff 40px, #ffffff 50px)"
                 }}
@@ -442,9 +465,9 @@ export default function Contact() {
                     scale: isCardEmerging ? 1 : 0.9,
                     zIndex: isCardEmerging ? 50 : 10
                   }}
-                  transition={{ 
-                    duration: 0.6, 
-                    ease: [0.16, 1, 0.3, 1] 
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1]
                   }}
                   onClick={(e) => e.stopPropagation()}
                   className="bg-[#fffefb] text-black border-3 border-black rounded-3xl p-5 sm:p-6 shadow-[12px_12px_0px_#000] relative space-y-3.5 text-left"
@@ -481,19 +504,10 @@ export default function Contact() {
                   ) : (
                     <form
                       name="contact"
-                      method="POST"
-                      data-netlify="true"
-                      netlify-honeypot="bot-field"
                       autoComplete="off"
                       onSubmit={handleFormSubmit}
                       className="space-y-3 relative z-10"
                     >
-                      <input type="hidden" name="form-name" value="contact" />
-                      <p className="hidden">
-                        <label>
-                          Don’t fill this out if you’re human: <input name="bot-field" />
-                        </label>
-                      </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div className="relative">
@@ -574,7 +588,7 @@ export default function Contact() {
               </div>
 
               {/* FRONT KRAFT POCKET WITH V-NOTCH (LAYER 3: Z-20 HIDES CARD WHEN INSIDE) */}
-              <div 
+              <div
                 onClick={handleEnvelopeClick}
                 className="absolute inset-x-0 bottom-0 h-[250px] z-20 pointer-events-auto cursor-pointer rounded-b-[28px] overflow-hidden flex flex-col justify-end"
               >
@@ -596,20 +610,19 @@ export default function Contact() {
                 className="absolute top-0 left-0 right-0 h-[220px] pointer-events-auto cursor-pointer drop-shadow-md flex flex-col items-center justify-start pt-14 z-30"
               >
                 <svg className="w-full h-full absolute inset-0" viewBox="0 0 500 220" preserveAspectRatio="none">
-                  <path 
-                    d="M 28,0 Q 10,0 4,20 L 250,215 L 496,20 Q 490,0 472,0 Z" 
-                    fill="#b08856" 
-                    stroke="#000000" 
-                    strokeWidth="4" 
+                  <path
+                    d="M 28,0 Q 10,0 4,20 L 250,215 L 496,20 Q 490,0 472,0 Z"
+                    fill="#b08856"
+                    stroke="#000000"
+                    strokeWidth="4"
                     strokeLinejoin="round"
                     strokeLinecap="round"
                   />
                 </svg>
 
                 {/* VINTAGE HANDWRITTEN / PRINTED STAMP DIRECTLY ON TOP FLAP FACE */}
-                <div className={`relative z-40 text-center space-y-0.5 opacity-90 select-none transition-opacity duration-300 ${
-                  isFlapOpen ? 'opacity-0' : 'opacity-100'
-                }`}>
+                <div className={`relative z-40 text-center space-y-0.5 opacity-90 select-none transition-opacity duration-300 ${isFlapOpen ? 'opacity-0' : 'opacity-100'
+                  }`}>
                   <p className="font-creative-cursive text-xl font-extrabold text-amber-950 transform -rotate-2">
                     ✦ A Note For You ✦
                   </p>
@@ -620,7 +633,7 @@ export default function Contact() {
               </motion.div>
 
               {/* REALISTIC RED / BURGUNDY WAX SEAL STAMP WITH KG MONOGRAM (LAYER 5: Z-40 / Z-60) */}
-              <motion.div 
+              <motion.div
                 animate={{
                   scale: envelopeStep === 'SUCCESS' ? [1.35, 1] : isFlapOpen ? 0.9 : 1,
                   rotate: isFlapOpen ? -15 : 0
@@ -631,11 +644,10 @@ export default function Contact() {
                 title={envelopeStep === 'SUCCESS' ? 'Envelope Sealed! Click to re-open' : 'KG Wax Seal Stamp — Click to open envelope'}
               >
                 {/* BURGUNDY MELTED WAX SEAL WITH GOLD MONOGRAM */}
-                <div className={`w-14 h-14 rounded-full border-3 border-black shadow-[4px_6px_12px_rgba(0,0,0,0.5)] flex items-center justify-center text-center font-mono-code relative hover:scale-110 transition-transform ${
-                  envelopeStep === 'SUCCESS' 
-                    ? 'bg-emerald-700 text-white' 
-                    : 'bg-[#7a0016] text-[#fef08a]'
-                }`}>
+                <div className={`w-14 h-14 rounded-full border-3 border-black shadow-[4px_6px_12px_rgba(0,0,0,0.5)] flex items-center justify-center text-center font-mono-code relative hover:scale-110 transition-transform ${envelopeStep === 'SUCCESS'
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-[#7a0016] text-[#fef08a]'
+                  }`}>
                   {/* Irregular Melted Wax Outer Rim */}
                   <div className="absolute inset-0 rounded-full border-2 border-red-950/40 pointer-events-none" />
                   <div className="w-10 h-10 rounded-full border-2 border-amber-300/40 flex items-center justify-center bg-gradient-to-b from-[#8f001c] to-[#600010] shadow-inner">
@@ -668,10 +680,10 @@ export default function Contact() {
 
         {/* CREATIVE GRAND FOOTER SECTION */}
         <footer className="pt-10 pb-6 border-t-2 border-black mt-10 space-y-6 text-left relative z-10">
-          
+
           {/* Footer Upper Telemetry Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center bg-[#fffdf0] p-6 rounded-3xl border-3 border-black shadow-[6px_6px_0px_#07090e]">
-            
+
             {/* Live India Clock & Timezone Badge */}
             <div className="space-y-1">
               <div className="flex items-center gap-2 font-mono-code text-[11px] font-extrabold text-black uppercase">
