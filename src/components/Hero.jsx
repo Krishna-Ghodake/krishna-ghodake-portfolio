@@ -1,34 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Activity, PenTool } from 'lucide-react';
 
 export default function Hero({ preloaderComplete = true }) {
-  // Motion variants for letter reveal
-  const titleContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1
-      }
-    }
-  };
+  // Live IST Nashik Clock state
+  const [time, setTime] = useState(new Date());
 
-  const letterVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const nameLetters = "KRISHNA".split("");
+  // Format Nashik IST time
+  const istTimeStr = time.toLocaleTimeString('en-US', {
+    timeZone: 'Asia/Kolkata',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+
+  // Calculate clock hand rotation angles
+  const seconds = time.getSeconds();
+  const minutes = time.getMinutes();
+  const hours = time.getHours() % 12;
+
+  const secondDeg = seconds * 6;
+  const minuteDeg = minutes * 6 + seconds * 0.1;
+  const hourDeg = hours * 30 + minutes * 0.5;
 
   return (
-    <section id="hero" className="relative pt-32 pb-0 overflow-hidden min-h-[95vh] flex flex-col justify-between hero-sketchpad-bg">
+    <section id="hero" className="relative pt-28 sm:pt-32 pb-0 overflow-hidden min-h-[92vh] flex flex-col justify-between hero-sketchpad-bg">
       
-      {/* Decorative Vector Line Accents & Crosshatch X Marks */}
+      {/* Enhanced Creative Ambient Background Artwork & Technical Blueprint Accents */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
-        <svg className="w-full h-full opacity-15" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Soft Glowing Ambient Light Blobs */}
+        <div className="absolute top-1/4 left-10 w-96 h-96 rounded-full bg-[#00D4FF]/12 blur-3xl" />
+        <div className="absolute top-1/3 right-12 w-96 h-96 rounded-full bg-[#facc15]/15 blur-3xl" />
+
+        <svg className="w-full h-full opacity-25" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
           <line x1="100" y1="0" x2="100" y2="800" stroke="#07090e" strokeWidth="1.5" strokeDasharray="6 6" />
           <line x1="400" y1="0" x2="400" y2="800" stroke="#07090e" strokeWidth="1" />
           <line x1="900" y1="0" x2="900" y2="800" stroke="#07090e" strokeWidth="1.5" strokeDasharray="4 4" />
@@ -36,96 +49,154 @@ export default function Hero({ preloaderComplete = true }) {
           <line x1="0" y1="200" x2="1200" y2="200" stroke="#07090e" strokeWidth="1" />
           <line x1="0" y1="650" x2="1200" y2="650" stroke="#07090e" strokeWidth="1.5" strokeDasharray="8 8" />
 
-          <path d="M150 150 L170 170 M170 150 L150 170" stroke="#00D4FF" strokeWidth="2" strokeLinecap="round" />
-          <path d="M850 120 L870 140 M870 120 L850 140" stroke="#07090e" strokeWidth="2" strokeLinecap="round" />
-          <path d="M600 500 L620 520 M620 500 L600 520" stroke="#ff2a85" strokeWidth="2" strokeLinecap="round" />
+          {/* Crosshair + SVG Marks */}
+          <path d="M 120 120 L 140 120 M 130 110 L 130 130" stroke="#00D4FF" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 1020 140 L 1040 140 M 1030 130 L 1030 150" stroke="#facc15" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 550 520 L 570 520 M 560 510 L 560 530" stroke="#ff2a85" strokeWidth="2.5" strokeLinecap="round" />
+
+          {/* Star Accent SVG Marks */}
+          <path d="M150 120 L160 140 L180 140 L165 152 L170 172 L150 160 L130 172 L135 152 L120 140 L140 140 Z" fill="#00D4FF" opacity="0.6" />
+          <path d="M920 100 L928 115 L945 115 L932 125 L936 140 L920 130 L904 140 L908 125 L895 115 L912 115 Z" fill="#facc15" opacity="0.8" />
         </svg>
       </div>
 
       <div className="container mx-auto px-6 sm:px-12 flex-1 flex items-center py-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center w-full">
           
-          {/* Left Hero Text Column */}
+          {/* LEFT COLUMN: Bold Headline & Dashed Quote Card */}
           <div className="lg:col-span-7 space-y-6 pt-2">
             
             {/* Top Pill Tag */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#07090e] text-white border border-black text-xs font-mono-code shadow-md"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#07090e] text-white border-2 border-black text-xs font-mono-code shadow-[3px_3px_0px_#00D4FF]"
             >
-              <span className="w-5 h-5 rounded-full bg-[#00D4FF] text-black font-bold flex items-center justify-center text-[10px]">
+              <span className="w-5 h-5 rounded-full bg-[#00D4FF] text-black font-extrabold flex items-center justify-center text-[10px]">
                 01
               </span>
-              <span className="font-bold tracking-wider uppercase">DISCOVERY STARTS HERE</span>
+              <span className="font-extrabold tracking-wider uppercase">DISCOVERY STARTS HERE</span>
             </motion.div>
 
-            {/* Headline Block */}
+            {/* Main Display Headline Block */}
             <motion.div
-              variants={titleContainerVariants}
-              initial="hidden"
-              animate={preloaderComplete ? "visible" : "hidden"}
-              className="relative pt-6 space-y-1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="relative pt-2 space-y-3"
             >
-              {/* Cursive Callout 1 (Hello, I'm) */}
-              <motion.span
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="font-handwritten text-4xl sm:text-5xl font-bold text-[#00D4FF] absolute -top-4 sm:-top-5 left-0 z-10 drop-shadow-sm"
-              >
-                Hello, I'm
-              </motion.span>
-
-              {/* Giant Name Display with Letter-by-Letter Kinetic Reveal */}
-              <div className="flex items-center overflow-hidden pt-3">
-                {nameLetters.map((letter, idx) => (
-                  <motion.span
-                    key={idx}
-                    variants={letterVariants}
-                    className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[5.5rem] xl:text-[6.5rem] font-extrabold text-[#07090e] leading-[0.95] tracking-tighter"
-                  >
-                    {letter}
-                  </motion.span>
-                ))}
+              {/* Clean Greeting: Hello, I am (ON ONE LINE) */}
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="font-handwritten text-3xl sm:text-4xl font-bold text-[#00D4FF] rotate-[-2deg]">
+                  Hello,
+                </span>
+                <span className="font-display text-2xl sm:text-3xl font-extrabold text-[#07090e] tracking-tight">
+                  I am
+                </span>
               </div>
 
-              {/* Second line G. in Cyan */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="font-display text-6xl sm:text-8xl md:text-9xl lg:text-[6rem] xl:text-[7rem] font-extrabold text-[#00D4FF] leading-[0.9] -mt-2 drop-shadow-md"
-              >
-                G.
-              </motion.div>
+              {/* Giant Display Headline: KRISHNA GHODAKE with Shattered 3D Kinetic Assembly & Smoky Blue Aura */}
+              <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[5.2rem] xl:text-[5.8rem] font-black leading-[0.94] tracking-tight uppercase relative group">
+                {/* Smoky Blue Energy Aura Glow (Behind Name) */}
+                <motion.div
+                  animate={{
+                    opacity: [0.35, 0.75, 0.35],
+                    scale: [0.96, 1.04, 0.96]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute -inset-3 bg-[#00D4FF]/25 blur-2xl rounded-3xl pointer-events-none group-hover:bg-[#00D4FF]/55 group-hover:blur-3xl transition-all duration-500"
+                />
 
-              {/* Hand-Drawn Wavy Line SVG */}
-              <svg className="w-64 sm:w-80 h-4 text-[#00D4FF] mt-2" viewBox="0 0 300 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 12C45 4 85 18 125 10C165 2 205 16 245 8C265 4 285 10 295 12" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-              </svg>
+                <motion.div
+                  whileHover={{ scale: 1.03, rotate: 1 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex flex-wrap items-center gap-x-2 relative text-[#00D4FF] bg-[#00D4FF]/12 border-3 border-[#00D4FF] rounded-2xl px-3 sm:px-5 py-1.5 shadow-[6px_6px_0px_#07090e] cursor-pointer"
+                >
+                  {/* Word 1: KRISHNA (Letter by Letter Shattered Assembly) */}
+                  <span className="inline-flex">
+                    {"KRISHNA".split("").map((char, i) => (
+                      <motion.span
+                        key={`k-${i}`}
+                        initial={{
+                          opacity: 0,
+                          x: (i % 2 === 0 ? -120 : 120) * (Math.sin(i + 1) + 1),
+                          y: (i % 3 === 0 ? -90 : 90) * (Math.cos(i + 1) + 1),
+                          rotate: i * 28 - 35,
+                          scale: 0.3
+                        }}
+                        animate={preloaderComplete ? { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 } : {}}
+                        transition={{
+                          type: "spring",
+                          stiffness: 210,
+                          damping: 15,
+                          delay: 0.15 + i * 0.045
+                        }}
+                        className="inline-block"
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </span>
+
+                  {/* Word 2: GHODAKE (Letter by Letter Shattered Assembly) */}
+                  <span className="inline-flex">
+                    {"GHODAKE".split("").map((char, i) => (
+                      <motion.span
+                        key={`g-${i}`}
+                        initial={{
+                          opacity: 0,
+                          x: (i % 2 === 0 ? 130 : -130) * (Math.cos(i + 2) + 1),
+                          y: (i % 3 === 0 ? 100 : -100) * (Math.sin(i + 2) + 1),
+                          rotate: i * -24 + 40,
+                          scale: 0.3
+                        }}
+                        animate={preloaderComplete ? { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 } : {}}
+                        transition={{
+                          type: "spring",
+                          stiffness: 210,
+                          damping: 15,
+                          delay: 0.45 + i * 0.045
+                        }}
+                        className="inline-block"
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </span>
+                </motion.div>
+              </h1>
             </motion.div>
 
-            {/* Sub-headline Paragraph in Creative Cursive Font */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="font-creative-cursive text-xl sm:text-2xl text-[#07090e]/95 max-w-xl leading-relaxed pt-1 font-bold text-left"
-            >
-              "{PORTFOLIO_DATA.personal.tagline}"
-            </motion.p>
-
-            {/* CTA Button Row */}
+            {/* Dashed Engineering Blueprint Quote Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2 relative"
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative bg-white/95 border-2 border-dashed border-[#07090e] rounded-2xl p-5 sm:p-6 shadow-[6px_6px_0px_#07090e] max-w-xl group"
+            >
+              {/* Tape Strips for Vintage Depth */}
+              <div className="absolute -top-3 left-6 w-16 h-5 bg-[#facc15]/60 border border-black/30 transform -rotate-3 rounded-xs pointer-events-none" />
+              <div className="absolute -bottom-3 right-8 w-16 h-5 bg-[#00D4FF]/60 border border-black/30 transform rotate-2 rounded-xs pointer-events-none" />
+
+              <p className="font-creative-cursive text-lg sm:text-xl text-[#07090e] leading-relaxed font-extrabold italic">
+                "{PORTFOLIO_DATA.personal.tagline}"
+              </p>
+            </motion.div>
+
+            {/* CTA Action Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-wrap items-center gap-4 pt-2"
             >
               <motion.a
                 href="#work"
-                whileHover={{ y: -8, scale: 1.05, boxShadow: "8px 8px 0px #00D4FF" }}
+                whileHover={{ y: -6, scale: 1.05, boxShadow: "8px 8px 0px #00D4FF" }}
                 whileTap={{ scale: 0.96 }}
                 className="btn-yellow-3d shadow-[4px_4px_0px_#000000]"
               >
@@ -133,122 +204,168 @@ export default function Hero({ preloaderComplete = true }) {
                 <ArrowRight className="w-4 h-4" />
               </motion.a>
 
-              {/* Handwritten Cursive Callout 2 */}
-              <span className="font-handwritten text-xl font-bold text-[#07090e] sm:ml-4 sm:inline-block rotate-[-2deg] bg-[#00D4FF]/20 px-3 py-1 rounded-full border border-[#00D4FF]">
-                interactive 3D &amp; WebGL ⚡
-              </span>
+              <motion.a
+                href="#story"
+                whileHover={{ y: -4, scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="px-6 py-3 rounded-2xl bg-white text-[#07090e] font-mono-code text-xs font-black border-2 border-black shadow-[4px_4px_0px_#07090e] hover:bg-[#00D4FF] hover:text-black transition-all flex items-center gap-2 cursor-pointer text-decoration-none"
+              >
+                <span>READ MY STORY 📖</span>
+              </motion.a>
             </motion.div>
-
-            {/* Scroll Indicator */}
-            <div className="pt-4 flex items-center gap-2 text-[11px] font-mono-code text-slate-700 uppercase tracking-widest font-bold">
-              <span className="w-px h-6 bg-slate-700" />
-              <span>SCROLL TO INVESTIGATE</span>
-            </div>
 
           </div>
 
-          {/* Right Column — Draggable Sticky Notes Workspace & Hanging Lanyard Badge */}
-          <div className="lg:col-span-5 relative min-h-[620px] w-full pt-2">
+          {/* RIGHT COLUMN: Interactive Draggable Neo-Brutalist Module Workspace */}
+          <div className="lg:col-span-5 relative min-h-[480px] lg:min-h-[500px] w-full pt-0 sm:pt-2">
 
-            {/* Handwritten Cursive Callout 3 (Top Right) */}
-            <div className="absolute -top-3 right-0 z-40 bg-[#07090e] px-3.5 py-1 rounded-full border border-[#00D4FF]/30 shadow-xl rotate-[2deg]">
-              <span className="font-handwritten text-base sm:text-lg font-bold text-[#00D4FF]">
-                designed &amp; coded with precision ✦
-              </span>
-            </div>
-
-            {/* Note 1: Yellow Post-It (Crisp Dark Obsidian Headlines & Text) */}
+            {/* Top Obsidian Dark Live Status Card (Shifted Further Right) */}
             <motion.div
               drag
               dragSnapToOrigin={false}
               dragElastic={0.15}
-              whileHover={{ scale: 1.06, rotate: -2, cursor: 'grab' }}
-              whileDrag={{ scale: 1.12, rotate: 0, zIndex: 50, cursor: 'grabbing', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
-              initial={{ opacity: 0, rotate: -6, y: -20 }}
-              animate={{ opacity: 1, rotate: -4, y: 0 }}
+              whileHover={{ scale: 1.04, rotate: 1, cursor: 'grab' }}
+              whileDrag={{ scale: 1.08, zIndex: 50, cursor: 'grabbing' }}
+              initial={{ opacity: 0, y: -20, rotate: 2 }}
+              animate={{ opacity: 1, y: 0, rotate: 2 }}
               transition={{ delay: 0.3 }}
-              className="sticky-note bg-[#facc15] text-[#07090e] w-52 sm:w-56 min-h-[190px] absolute top-0 left-0 sm:left-2 lg:-left-2 z-10 border-2 border-black shadow-2xl p-5 cursor-grab active:cursor-grabbing flex flex-col justify-between"
+              className="bg-[#07090e] text-white w-60 sm:w-68 border-2 border-black rounded-2xl p-4 sm:p-5 shadow-[6px_6px_0px_#00D4FF] absolute top-0 right-0 sm:-right-4 lg:-right-10 z-30 cursor-grab active:cursor-grabbing"
             >
-              <div className="tape-strip" />
-              <div className="space-y-1.5">
-                <span className="font-mono-code text-[10px] uppercase font-black text-[#07090e] tracking-wider block pt-1">
-                  CURRENTLY
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span className="font-mono-code text-[11px] font-black uppercase text-[#00D4FF] tracking-wider flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-[#00D4FF] animate-pulse" />
+                  LIVE STATUS
                 </span>
-                <h3 className="font-display text-xs sm:text-sm text-[#07090e] leading-tight uppercase font-black">
-                  BUILDING CREATIVE DIGITAL EXPERIENCES
-                </h3>
-                <p className="font-handwritten text-sm sm:text-base text-[#07090e] font-extrabold leading-tight pt-1">
-                  Crafting responsive web apps &amp; Next.js 16 features.
-                </p>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
               </div>
-              <div className="inline-block mt-3 bg-black px-2.5 py-1 rounded-md border border-black font-handwritten text-xs sm:text-sm text-[#facc15] font-bold self-start">
-                + Next.js 16 &amp; React 19
-              </div>
+              <p className="font-display text-xs sm:text-sm text-white pt-2 leading-snug font-bold">
+                Crafting responsive web apps &amp; interactive systems with React, Next.js &amp; Three.js ⚡
+              </p>
             </motion.div>
 
-            {/* Note 2: Sky Blue Post-It (Crisp Dark Obsidian Headlines & Text) */}
+            {/* Middle Main Yellow Post-It Card (Shifted Further Right) */}
             <motion.div
               drag
               dragSnapToOrigin={false}
               dragElastic={0.15}
-              whileHover={{ scale: 1.06, rotate: 3, cursor: 'grab' }}
-              whileDrag={{ scale: 1.12, rotate: 0, zIndex: 50, cursor: 'grabbing', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
-              initial={{ opacity: 0, rotate: 5, y: 20 }}
-              animate={{ opacity: 1, rotate: 4, y: 0 }}
+              whileHover={{ scale: 1.05, rotate: -2, cursor: 'grab' }}
+              whileDrag={{ scale: 1.08, zIndex: 50, cursor: 'grabbing' }}
+              initial={{ opacity: 0, y: 10, rotate: -3 }}
+              animate={{ opacity: 1, y: 0, rotate: -3 }}
               transition={{ delay: 0.4 }}
-              className="sticky-note bg-[#38bdf8] text-[#07090e] w-56 sm:w-60 min-h-[250px] absolute top-12 right-0 sm:right-1 lg:-right-4 z-20 border-2 border-black shadow-2xl p-5 cursor-grab active:cursor-grabbing flex flex-col justify-between"
+              className="sticky-note bg-[#facc15] text-[#07090e] w-64 sm:w-72 min-h-[190px] sm:min-h-[210px] border-3 border-black rounded-2xl p-4 sm:p-5 shadow-[8px_8px_0px_#07090e] absolute top-16 sm:top-20 left-2 lg:-left-2 z-20 cursor-grab active:cursor-grabbing flex flex-col justify-between"
             >
               <div className="tape-strip" />
-              <div className="space-y-2">
-                <span className="font-mono-code text-[10px] uppercase font-black text-[#07090e] tracking-wider block">
+              <div className="space-y-1.5 pt-1">
+                <span className="font-mono-code text-[10px] uppercase font-black tracking-wider text-black bg-white/60 px-2 py-0.5 rounded-md inline-block">
                   EXPERIENCE
                 </span>
-                <h3 className="font-display text-xs sm:text-sm text-[#07090e] leading-snug uppercase font-black">
-                  FULL-STACK DEVELOPMENT &amp; UI/UX SYSTEMS
+                <h3 className="font-display text-base sm:text-lg text-[#07090e] uppercase font-black leading-tight">
+                  FULL-STACK DIGITAL EXPERIENCES &amp; UI/UX SYSTEMS
                 </h3>
-                <p className="font-handwritten text-sm sm:text-base text-[#07090e] font-extrabold leading-tight pt-1">
-                  Architecting scalable web apps &amp; interactive prototypes.
-                </p>
               </div>
-              <div className="inline-block mt-3 bg-black px-2.5 py-1 rounded-md border border-black font-handwritten text-xs sm:text-sm text-[#00D4FF] font-bold self-start">
-                + TypeScript &amp; Tailwind
+
+              {/* Pin Badge */}
+              <div className="flex items-center justify-between pt-2">
+                <span className="font-handwritten text-xs sm:text-sm font-bold text-black italic">
+                  Nashik, Maharashtra, India
+                </span>
+                <div className="w-5 h-5 rounded-full bg-black text-[#facc15] flex items-center justify-center font-black text-xs">
+                  ✦
+                </div>
               </div>
             </motion.div>
 
-            {/* Note 3: Vibrant Orange Post-It (Bottom Center - Clean Plain White Text) */}
+            {/* Creative Sketchbook Card (Shifted Further Right) */}
             <motion.div
               drag
               dragSnapToOrigin={false}
               dragElastic={0.15}
-              whileHover={{ scale: 1.06, rotate: -1, cursor: 'grab' }}
-              whileDrag={{ scale: 1.12, rotate: 0, zIndex: 50, cursor: 'grabbing', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
-              initial={{ opacity: 0, rotate: -3, y: 40 }}
-              animate={{ opacity: 1, rotate: -2, y: 0 }}
+              whileHover={{ scale: 1.05, rotate: -1, cursor: 'grab' }}
+              whileDrag={{ scale: 1.08, zIndex: 50, cursor: 'grabbing' }}
+              initial={{ opacity: 0, y: 30, rotate: 1 }}
+              animate={{ opacity: 1, y: 0, rotate: 1 }}
               transition={{ delay: 0.5 }}
-              className="sticky-note bg-[#f97316] text-white w-56 sm:w-64 min-h-[210px] absolute top-[19.5rem] sm:top-[18.5rem] left-4 sm:left-12 lg:left-6 z-30 border-2 border-white shadow-2xl p-5 cursor-grab active:cursor-grabbing flex flex-col justify-between"
+              className="bg-[#fefce8] text-[#07090e] border-3 border-black rounded-2xl p-4 sm:p-5 shadow-[6px_6px_0px_#07090e] absolute top-[13.5rem] sm:top-[14.5rem] right-0 sm:-right-10 lg:-right-24 z-30 cursor-grab active:cursor-grabbing w-60 sm:w-68 relative overflow-hidden"
             >
-              <div className="tape-strip" />
-              <div className="space-y-1.5">
-                <span className="font-mono-code text-[10px] uppercase font-bold text-white tracking-wider block">
-                  FOCUS
-                </span>
-                <h3 className="font-display text-xs sm:text-sm text-white leading-snug uppercase font-extrabold">
-                  CODE, DESIGN &amp; INTERACTION
-                </h3>
-                <p className="font-handwritten text-sm sm:text-base text-white font-bold leading-tight pt-1">
-                  Building interactive 3D scenes, UI systems &amp; animations.
-                </p>
+              {/* Metal Spiral Binder Rings at top */}
+              <div className="flex items-center justify-between px-3 -mt-6 mb-3">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="w-3 h-4 rounded-sm bg-gradient-to-b from-slate-700 via-slate-900 to-slate-800 border border-black shadow-xs" />
+                ))}
               </div>
-              <div className="inline-block mt-3 bg-black/50 px-2.5 py-1 rounded-md border border-white/40 font-handwritten text-xs sm:text-sm text-[#facc15] font-bold self-start">
-                + 3D Canvases &amp; Figma Pro
+
+              {/* Header Label */}
+              <div className="flex items-center justify-between border-b border-blue-200/80 pb-2">
+                <span className="font-mono-code text-[10px] uppercase font-black tracking-wider text-slate-700 flex items-center gap-1">
+                  ✍️ CREATIVE SKETCHBOOK
+                </span>
+                <span className="font-mono-code text-[9px] bg-[#07090e] text-[#00D4FF] px-2 py-0.5 rounded-md font-bold">
+                  VERIFIED
+                </span>
+              </div>
+
+              {/* Ruled Notebook Paper Content Area */}
+              <div className="pt-2.5 space-y-2 relative min-h-[90px]">
+                {/* Horizontal Ruled Paper Lines */}
+                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-30">
+                  <div className="border-b border-blue-300 w-full" />
+                  <div className="border-b border-blue-300 w-full" />
+                  <div className="border-b border-blue-300 w-full" />
+                </div>
+
+                {/* Clean Handwritten Signature */}
+                <div className="relative z-10">
+                  <div className="font-handwritten text-2xl sm:text-3xl font-bold text-[#07090e] leading-none">
+                    Krishna Ghodake
+                  </div>
+                </div>
+
+                {/* Handwritten Creative Checklist */}
+                <div className="font-mono-code text-[10.5px] font-bold text-slate-800 space-y-1 pt-1.5 relative z-10">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#00D4FF] font-black">✓</span>
+                    <span>Building Performant Web Apps</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#facc15] font-black">✓</span>
+                    <span>Crafting Pixel-Perfect UI/UX</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-emerald-500 font-black">✓</span>
+                    <span>3D Canvases &amp; Interactions</span>
+                  </div>
+                </div>
+
+                {/* Mini Code Snippet Pill */}
+                <div className="pt-1 relative z-10">
+                  <div className="bg-[#07090e] text-[#00D4FF] font-mono-code text-[10px] font-black px-2.5 py-1 rounded-lg border border-black shadow-xs inline-block">
+                    const vision = "Performant + Memorable";
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Stamp Badge */}
+              <div className="mt-3 pt-2 border-t border-blue-200/80 flex items-center justify-between">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#facc15] text-black border border-black rounded-full font-mono-code text-[9px] font-black">
+                  ⚡ CREATIVE MINDSET
+                </span>
+                <span className="font-mono-code text-[9px] font-extrabold text-slate-600">
+                  NASHIK, INDIA
+                </span>
               </div>
             </motion.div>
 
-            {/* Handwritten Cursive Callout 4 */}
-            <div className="absolute bottom-0 right-2 z-40 bg-[#07090e] px-3.5 py-1.5 rounded-full border border-white/20 shadow-2xl rotate-[-3deg]">
-              <span className="font-handwritten text-base sm:text-lg font-bold text-[#00D4FF]">
-                you can move these around ↗
-              </span>
+            {/* Handwritten Cursive Drag Annotation Badge with Pointer Arrow (Positioned to the left of cards for 100% clean clearance) */}
+            <div className="absolute bottom-1 -left-12 lg:-left-28 z-40 flex items-center gap-1.5 pointer-events-none">
+              <svg className="w-8 h-8 text-[#00D4FF] transform rotate-45 -mr-1" viewBox="0 0 50 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 46 16 Q 26 28 8 13 M 8 13 L 16 8 M 8 13 L 14 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <div className="bg-[#07090e] px-3.5 py-1.5 rounded-full border border-[#00D4FF] shadow-xl rotate-[-3deg]">
+                <span className="font-handwritten text-sm sm:text-base font-bold text-[#00D4FF]">
+                  drag &amp; stretch me around
+                </span>
+              </div>
             </div>
 
           </div>
@@ -257,7 +374,7 @@ export default function Hero({ preloaderComplete = true }) {
       </div>
 
       {/* Bottom Full-Width Solid Black Continuous Marquee Ticker Bar */}
-      <div className="relative mt-12 w-full z-20">
+      <div className="relative w-full z-20 mt-10">
         <div className="ticker-black-container shadow-2xl">
           <div className="ticker-black-track">
             {[...Array(6)].map((_, i) => (
