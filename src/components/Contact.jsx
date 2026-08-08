@@ -44,6 +44,8 @@ export default function Contact() {
   // PHYSICAL ENVELOPE STEP STATE MACHINE:
   // 'CLOSED' -> 'OPENING' -> 'EMERGING' -> 'OPEN' -> 'SUBMITTING' -> 'SUCCESS' -> 'RETURNING' -> 'CLOSING' -> 'CLOSED'
   const [envelopeStep, setEnvelopeStep] = useState('CLOSED');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [formData, setFormData] = useState({ user_name: '', user_email: '', user_message: '' });
 
   // Auto-scroll screen to frame the full contact card in viewport when opened
@@ -67,7 +69,7 @@ export default function Contact() {
     if (e) e.stopPropagation();
 
     // Prevent conflicting interactions during transition steps
-    if (envelopeStep === 'OPENING' || envelopeStep === 'EMERGING' || envelopeStep === 'SUBMITTING' || envelopeStep === 'RETURNING' || envelopeStep === 'CLOSING') {
+    if (envelopeStep === 'OPENING' || envelopeStep === 'EMERGING' || envelopeStep === 'SUBMITTING' || envelopeStep === 'RETURNING' || envelopeStep === 'CLOSING' || isSubmitting) {
       return;
     }
 
@@ -101,33 +103,60 @@ export default function Contact() {
     }
   };
 
-  // Form Submit -> Success -> Card Returns -> Flap Closes -> Closed
-  const handleFormSubmit = (e) => {
+  // Form Submit -> API Call -> Success -> Card Returns -> Flap Closes -> Closed
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
     if (!formData.user_name || !formData.user_email || !formData.user_message) return;
 
-    // 1. Show Green Success Tick Banner immediately on card
-    setEnvelopeStep('SUCCESS');
+    setSubmitError('');
+    setIsSubmitting(true);
 
-    // 2. Fast timing: Card returns inside envelope pocket within ~0.75s
-    setTimeout(() => {
-      setEnvelopeStep('RETURNING');
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.user_name,
+          email: formData.user_email,
+          message: formData.user_message
+        })
+      });
 
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || "Failed to send message");
+      }
+
+      setIsSubmitting(false);
+
+      // 1. Show Green Success Tick Banner immediately on card
+      setEnvelopeStep('SUCCESS');
+
+      // 2. Fast timing: Card returns inside envelope pocket within ~0.75s
       setTimeout(() => {
-        setEnvelopeStep('CLOSING');
+        setEnvelopeStep('RETURNING');
 
         setTimeout(() => {
-          setEnvelopeStep('CLOSED');
-          setFormData({ user_name: '', user_email: '', user_message: '' });
-        }, 350);
-      }, 400);
-    }, 750);
+          setEnvelopeStep('CLOSING');
+
+          setTimeout(() => {
+            setEnvelopeStep('CLOSED');
+            setFormData({ user_name: '', user_email: '', user_message: '' });
+          }, 350);
+        }, 400);
+      }, 750);
+    } catch (error) {
+      console.error("Contact form error:", error);
+      setIsSubmitting(false);
+      setSubmitError(error.message || "Failed to send message. Please try again.");
+    }
   };
 
   const isFlapOpen = envelopeStep === 'OPENING' || envelopeStep === 'EMERGING' || envelopeStep === 'OPEN' || envelopeStep === 'SUBMITTING' || envelopeStep === 'SUCCESS' || envelopeStep === 'RETURNING';
   const isCardEmerging = envelopeStep === 'EMERGING' || envelopeStep === 'OPEN' || envelopeStep === 'SUBMITTING' || envelopeStep === 'SUCCESS';
-  const isCardInteractive = envelopeStep === 'OPEN';
+  const isCardInteractive = envelopeStep === 'OPEN' && !isSubmitting;
 
   return (
     <section
@@ -553,9 +582,15 @@ export default function Contact() {
                           whileTap={{ scale: 0.96 }}
                           className="w-full sm:w-auto py-2.5 px-7 rounded-full bg-black text-[#fffefb] border-2 border-black font-mono-code font-black text-xs uppercase tracking-widest hover:bg-[#00D4FF] hover:text-black transition-all shadow-[4px_4px_0px_#000000] cursor-pointer inline-flex items-center justify-center gap-2 disabled:opacity-50"
                         >
-                          <span>SEND MESSAGE</span>
-                          <SendHorizontal className="w-4 h-4" />
+                          <span>{isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}</span>
+                          <SendHorizontal className={`w-4 h-4 ${isSubmitting ? 'animate-pulse' : ''}`} />
                         </motion.button>
+
+                        {submitError && (
+                          <p className="font-mono-code text-[11px] font-bold text-rose-600 text-center pt-2">
+                            ⚠️ {submitError}
+                          </p>
+                        )}
                       </div>
                     </form>
                   )}
