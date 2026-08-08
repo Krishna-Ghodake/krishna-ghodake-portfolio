@@ -36,7 +36,7 @@ ${message}
             console.error("Resend error:", error);
 
             return res.status(500).json({
-                error: "Failed to send email.",
+                error: error.message || "Failed to send email.",
             });
         }
 
@@ -48,7 +48,7 @@ ${message}
         console.error("Contact API error:", error);
 
         return res.status(500).json({
-            error: "Something went wrong.",
+            error: error.message || "Something went wrong.",
         });
     }
 }
